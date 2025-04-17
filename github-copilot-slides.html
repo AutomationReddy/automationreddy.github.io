@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: #f0f6fc;
+      background-color: #0d1117;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Morphing gradient background animation for body */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(225deg, #0d1117 0%, #1c1f25 25%, #1f2937 50%, #182230 75%, #0d1117 100%);
+      background-size: 400% 400%;
+      z-index: -1;
+      animation: gradientBackground 15s ease infinite;
+      opacity: 0.75;
+    }
+    
+    /* Background animation keyframes */
+    @keyframes gradientBackground {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .slideshow {
+      height: 100%;
+      position: relative;
+    }
+    
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+      display: flex;
+      padding: 3vh 4vw; /* Using viewport units for responsive padding */
+      box-sizing: border-box;
+      overflow: auto; /* Allow scrolling if content is too large */
+      z-index: 1;
+    }
+    
+    .slide.active {
+      opacity: 1;
+      display: flex;
+      flex-direction: column;
+      z-index: 2;
+      animation: slideEntry 0.8s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+    }
+    
+    .slide.fade-out {
+      animation: fadeOut 0.6s ease-in-out forwards;
+      z-index: 1;
+    }
+    
+    /* Fix for Q&A slide to ensure it doesn't appear on every page */
+    .slide:nth-child(11) {
+      display: none;
+    }
+    
+    .slide:nth-child(11).active {
+      display: flex;
+    }
+    
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 90vw; /* Using viewport width instead of fixed pixels */
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    /* Screen size adaptations */
+    @media (min-width: 1600px) { /* For larger screens like 27" */
+      .slide-content {
+        max-width: 1400px;
+        font-size: 1.1em;
+      }
+    }
+    
+    @media (max-width: 1024px) { /* For laptop screens */
+      .slide-content {
+        max-width: 90vw;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+      }
+      
+      .code-block {
+        font-size: 0.85rem;
+      }
+    }
+    
+    .title-slide {
+      text-align: center;
+    }
+    
+    h1 {
+      color: #f0f6fc;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    h2 {
+      color: #58a6ff;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      /* border-bottom: 1px solid #30363d; */
+      padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+      color: #d2a8ff;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    p, li {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    /* Removing green checkmarks from regular lists */
+    ul {
+      list-style-type: disc;
+      padding-left: 2rem;
+    }
+    
+    li {
+      position: relative;
+      padding-left: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    /* Remove the automatic green checkmarks */
+    li::before {
+      content: none;
+    }
+    
+    /* Custom class for checkmark lists when needed */
+    .checkmark-list {
+      list-style-type: none;
+      padding-left: 1rem;
+    }
+    
+    .checkmark-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .checkmark-list li::before {
+      content: "✓";
+      color: #238636;
+      position: absolute;
+      left: 0;
+    }
+    
+    .code-block {
+      background-color: #161b22;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      max-height: 40vh; /* Limit height for better slide balance */
+    }
+    
+    .code-comment {
+      color: #8b949e;
+    }
+    
+    .code-keyword {
+      color: #ff7b72;
+    }
+    
+    .code-string {
+      color: #a5d6ff;
+    }
+    
+    .code-function {
+      color: #d2a8ff;
+    }
+    
+    .two-column {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+    
+    .column {
+      flex: 1;
+      min-width: 250px; /* Ensure minimum width for readability */
+    }
+    
+    .footer {
+      font-size: 0.8rem;
+      color: #8b949e;
+      text-align: center;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      /* border-top: 1px solid #30363d; */
+    }
+    
+    .navigation {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+    }
+    
+    .nav-button {
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin-left: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: opacity 0.3s ease, background 0.3s ease;
+    }
+    
+    .nav-button:hover {
+      background: #2ea043;
+    }
+    
+    .nav-button.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .slide-number {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .grid-item {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+    
+    .highlight {
+      color: #58a6ff;
+      font-weight: bold;
+    }
+    
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    
+    .logo-container img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .flowchart {
+      background: #161b22;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    
+    .flow-step {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    
+    .flow-step:not(:last-child):after {
+      content: "↓";
+      position: absolute;
+      bottom: -1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #58a6ff;
+      font-size: 1.5rem;
+    }
+    
+    .warning {
+      background: rgba(187, 128, 9, 0.15);
+      border-left: 4px solid #bb8009;
+      padding: 0.8rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+    }
+    
+    .tip {
+      background: rgba(56, 139, 253, 0.15);
+      border-left: 4px solid #388bfd;
+      padding: 0.8rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+    }
+    
+    .inspiration {
+      background: rgba(210, 168, 255, 0.15);
+      border-left: 4px solid #d2a8ff;
+      padding: 0.8rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+      font-style: italic;
+    }
+    
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #30363d;
+      padding: 0.8rem;
+      text-align: center;
+    }
+    
+    .comparison-table th {
+      background-color: #161b22;
+      color: #58a6ff;
+      font-weight: bold;
+    }
+    
+    .comparison-table tr:nth-child(even) {
+      background-color: #161b22;
+    }
+    
+    .image-container {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+    
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .image-caption {
+      font-size: 0.9rem;
+      color: #8b949e;
+      margin-top: 0.5rem;
+    }
+    
+    /* Custom styles for MCP Server Integration slide */
+    .mcp-list li {
+      list-style-type: none;
+    }
+    
+    .mcp-list li.checkmark {
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .mcp-list li.checkmark::before {
+      content: "✓";
+      color: #238636;
+      position: absolute;
+      left: 0;
+    }
+    
+    /* Fix for the code in slide 3 */
+    .compact-code {
+      max-height: 30vh; /* Limit the height */
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    /* Video styling for slide 5 */
+    .video-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .video-container video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    /* Make sure slide 5 content is properly aligned */
+    .slide:nth-child(5) .slide-content {
+      justify-content: flex-start;
+      padding-top: 20px;
+    }
+    
+    .slide:nth-child(5) .two-column {
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .bottom-video-container {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .bottom-video-container video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .video-caption {
+      font-size: 0.9rem;
+      color: #8b949e;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    /* Improved animation for the slide 1 logo - smoother continuous motion */
+    @keyframes nodSideways {
+      0% { transform: rotate(-10deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(-5deg); }
+      75% { transform: rotate(10deg); }
+      100% { transform: rotate(-10deg); }
+    }
+
+    .title-slide .logo-container img {
+      animation: nodSideways 5s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    /* Added element entrance animations - refined for top-to-bottom flow */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Animation for code blocks to appear sequentially */
+    @keyframes fadeInCode {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Animation for inspiration quotes with a gentle glow effect */
+    @keyframes fadeInGlow {
+      0% {
+        opacity: 0;
+        box-shadow: 0 0 0 rgba(210, 168, 255, 0);
+      }
+      50% {
+        box-shadow: 0 0 8px rgba(210, 168, 255, 0.4);
+      }
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 4px rgba(210, 168, 255, 0.2);
+      }
+    }
+    
+    /* Animation for table rows to appear progressively */
+    @keyframes fadeInTable {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Animation for flowchart steps */
+    @keyframes fadeInStep {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Animation for flowchart arrows */
+    @keyframes fadeInArrow {
+      0% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.7;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Improved question mark animation for Q&A slide - continuous floating */
+    @keyframes floatEffect {
+      0% { transform: translateY(-15px) rotate(-5deg); }
+      25% { transform: translateY(0px) rotate(2deg); }
+      50% { transform: translateY(15px) rotate(5deg); }
+      75% { transform: translateY(0px) rotate(-2deg); }
+      100% { transform: translateY(-15px) rotate(-5deg); }
+    }
+
+    @keyframes pulseGlow {
+      0% { filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4)); }
+      50% { filter: drop-shadow(0 0 25px rgba(88, 166, 255, 0.9)); }
+      100% { filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4)); }
+    }
+
+    .qa-image {
+      animation: floatEffect 6s ease-in-out infinite, pulseGlow 4s infinite;
+      transition: transform 0.3s ease;
+    }
+
+    .qa-image:hover {
+      transform: scale(1.05) rotate(5deg);
+    }
+
+    /* Particle styling for all slides */
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: rgba(88, 166, 255, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slideshow {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Slide transition animation */
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+    }
+    
+    /* Enhanced slide entry animation with 3D effect */
+    @keyframes slideEntry {
+      from {
+        opacity: 0;
+        transform: translateY(50px) perspective(1000px) rotateX(5deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) perspective(1000px) rotateX(0);
+      }
+    }
+    
+    /* Consistent top-to-bottom animations for all slides */
+    .slide h2 {
+      animation: fadeInRight 0.8s ease-out forwards;
+      opacity: 0;
+      transform-origin: left center;
+    }
+    
+    .slide.active h3 {
+      animation: fadeInUp 0.6s ease-out forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+    
+    .slide.active p, .slide.active .tip, .slide.active .warning {
+      animation: fadeInUp 0.8s ease-out forwards;
+      animation-delay: 0.5s;
+      opacity: 0;
+    }
+    
+    /* Properly sequenced list item animations */
+    .slide.active li {
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+    
+    .slide.active li:nth-child(1) { animation-delay: 0.5s; }
+    .slide.active li:nth-child(2) { animation-delay: 0.7s; }
+    .slide.active li:nth-child(3) { animation-delay: 0.9s; }
+    .slide.active li:nth-child(4) { animation-delay: 1.1s; }
+    .slide.active li:nth-child(5) { animation-delay: 1.3s; }
+    .slide.active li:nth-child(6) { animation-delay: 1.5s; }
+    
+    /* Sequential code block animations for slide 6 */
+    .slide:nth-child(6).active .code-block:nth-of-type(1) {
+      animation: fadeInCode 0.8s ease-out forwards;
+      animation-delay: 0.6s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(6).active .code-block:nth-of-type(2) {
+      animation: fadeInCode 0.8s ease-out forwards;
+      animation-delay: 1.2s;
+      opacity: 0;
+    }
+    
+    /* Slide 7 code block sequential animations */
+    .slide:nth-child(7).active .code-block:nth-of-type(1) {
+      animation: fadeInCode 0.8s ease-out forwards;
+      animation-delay: 0.6s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(7).active .code-block:nth-of-type(2) {
+      animation: fadeInCode 0.8s ease-out forwards;
+      animation-delay: 1.2s;
+      opacity: 0;
+    }
+    
+    .slide.active .image-container, .slide.active .video-container, .slide.active .bottom-video-container {
+      animation: zoomIn 1s ease-out forwards;
+      animation-delay: 1.7s;
+      opacity: 0;
+    }
+    
+    /* Animation for inspiration blocks */
+    .slide.active .inspiration {
+      animation: fadeInGlow 1.2s ease-out forwards;
+      animation-delay: 1.8s;
+      opacity: 0;
+    }
+    
+    /* Animation for comparison table in slide 4 - top to bottom */
+    .slide:nth-child(4).active .comparison-table th {
+      animation: fadeInTable 0.6s ease-out forwards;
+      animation-delay: 0.6s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(4).active .comparison-table tr:nth-child(1) td {
+      animation: fadeInTable 0.6s ease-out forwards;
+      animation-delay: 0.8s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(4).active .comparison-table tr:nth-child(2) td {
+      animation: fadeInTable 0.6s ease-out forwards;
+      animation-delay: 1.0s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(4).active .comparison-table tr:nth-child(3) td {
+      animation: fadeInTable 0.6s ease-out forwards;
+      animation-delay: 1.2s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(4).active .comparison-table tr:nth-child(4) td {
+      animation: fadeInTable 0.6s ease-out forwards;
+      animation-delay: 1.4s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(4).active .comparison-table tr:nth-child(5) td {
+      animation: fadeInTable 0.6s ease-out forwards;
+      animation-delay: 1.6s;
+      opacity: 0;
+    }
+
+    /* Animation for flowchart steps with staggered timing */
+    .slide:nth-child(8).active .flow-step:nth-child(1) {
+      animation: fadeInStep 0.6s ease-out forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(8).active .flow-step:nth-child(2) {
+      animation: fadeInStep 0.6s ease-out forwards;
+      animation-delay: 0.6s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(8).active .flow-step:nth-child(3) {
+      animation: fadeInStep 0.6s ease-out forwards;
+      animation-delay: 0.9s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(8).active .flow-step:nth-child(4) {
+      animation: fadeInStep 0.6s ease-out forwards;
+      animation-delay: 1.2s;
+      opacity: 0;
+    }
+    
+    .slide:nth-child(8).active .flow-step:nth-child(5) {
+      animation: fadeInStep 0.6s ease-out forwards;
+      animation-delay: 1.5s;
+      opacity: 0;
+    }
+    
+    /* Animation for the arrows between flowchart steps */
+    .slide:nth-child(8).active .flow-step:not(:last-child):after {
+      animation: fadeInArrow 0.5s ease-out forwards;
+      animation-delay: 1.7s;
+      opacity: 0;
+    }
+
+    /* Enhanced 3D card effect for tip, warning, inspiration boxes */
+    .tip, .warning, .inspiration {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .tip:hover, .warning:hover, .inspiration:hover {
+      transform: translateY(-5px) perspective(1000px) rotateX(2deg);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      cursor: default;
+    }
+    
+    /* 3D card effect for comparison table */
+    .comparison-table {
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transform-style: preserve-3d;
+    }
+    
+    .comparison-table:hover {
+      transform: perspective(1000px) rotateX(2deg) scale(1.01);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
+    }
+    
+    /* Add 3D hover effect to code blocks */
+    .code-block {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .code-block:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Add subtle neon glow effect to images on hover */
+    .image-container img {
+      transition: filter 0.4s ease, transform 0.4s ease;
+    }
+    
+    .image-container img:hover {
+      filter: drop-shadow(0 0 10px rgba(88, 166, 255, 0.7));
+      transform: scale(1.03);
+    }
+
+    /* Text highlighting effect with gradient background */
+    .highlight-text {
+      background: linear-gradient(120deg, rgba(88, 166, 255, 0.2), rgba(210, 168, 255, 0.4), rgba(88, 166, 255, 0.2));
+      background-size: 200% 100%;
+      animation: gradientMove 3s ease infinite;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Enhanced title animation with text reveal effect */
+    .title-slide h1 {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      animation: textReveal 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    }
+    
+    @keyframes textReveal {
+      0% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    /* Animated underline effect for headings */
+    h2::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #58a6ff, #d2a8ff);
+      transition: width 1.5s ease;
+      margin-top: 5px;
+      border-radius: 3px;
+    }
+    
+    .slide.active h2::after {
+      width: 100%;
+    }
+    
+    /* Glowing highlight for key terms */
+    strong {
+      color: #fff;
+      text-shadow: 0 0 5px rgba(88, 166, 255, 0.7);
+      transition: text-shadow 0.3s ease;
+    }
+    
+    strong:hover {
+      text-shadow: 0 0 8px rgba(88, 166, 255, 0.9), 0 0 12px rgba(88, 166, 255, 0.6);
+    }
+
+    /* Cursor spotlight effect that follows the mouse */
+    .spotlight-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .spotlight {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at center,
+        rgba(88, 166, 255, 0.08) 0%,
+        rgba(88, 166, 255, 0.04) 40%,
+        rgba(88, 166, 255, 0) 70%
+      );
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    
+    /* SVG background pattern */
+    .svg-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    
+    /* Interactive button styles for navigation */
+    .nav-button {
+      background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-left: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .nav-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(135deg, #2ea043 0%, #34b249 100%);
+    }
+    
+    .nav-button:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+      transition: all 0.6s ease;
+    }
+    
+    .nav-button:hover:after {
+      left: 100%;
+    }
+
+    /* Improved fullscreen button with slideshow icon */
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(35, 134, 54, 0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .fullscreen-btn:hover {
+      background: rgba(35, 134, 54, 1);
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Slideshow icon (replacing the plus icon) */
+    .fullscreen-btn .icon {
+      position: relative;
+      width: 18px;
+      height: 18px;
+    }
+    
+    /* The slideshow screen */
+    .fullscreen-btn .icon::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 14px;
+      background: transparent;
+      border: 2px solid white;
+      border-radius: 2px;
+      top: 1px;
+      left: 0;
+    }
+    
+    /* The slideshow slides */
+    .fullscreen-btn .icon::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 6px;
+      background: white;
+      top: 5px;
+      left: 4px;
+    }
+    
+    /* Modified slideshow icon for when fullscreen is active */
+    .fullscreen-active .fullscreen-btn .icon::before {
+      width: 14px;
+      height: 14px;
+      border-width: 2px;
+      top: 1px;
+      left: 2px;
+    }
+    
+    .fullscreen-active .fullscreen-btn .icon::after {
+      width: 10px;
+      height: 2px;
+      top: 7px;
+      left: 4px;
+    }
+    
+    .slideshow.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      background-color: #0d1117;
+      padding: 0;
+    }
+    
+    .fullscreen-active .fullscreen-btn .icon::before {
+      width: 12px;
+      height: 2px;
+      left: 2px;
+      top: 7px;
+    }
+    
+    .fullscreen-active .fullscreen-btn .icon::after {
+      width: 12px;
+      height: 2px;
+      left: 2px;
+      top: 7px;
+    }
+    
+    .slide-progress-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      z-index: 101;
+      background: rgba(48, 54, 61, 0.5);
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+    
+    .fullscreen-active .slide-progress-container {
+      opacity: 1;
+    }
+    
+    .slide-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #58a6ff, #d2a8ff);
+      width: 0%;
+      transition: width 0.2s ease-out;
+    }
+    
+    /* Presentation controls that appear in fullscreen mode */
+    .presentation-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 102;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background: rgba(13, 17, 23, 0.7);
+      backdrop-filter: blur(5px);
+      padding: 10px 20px;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .fullscreen-active .presentation-controls {
+      opacity: 1;
+    }
+    
+    .control-btn {
+      background: none;
+      border: none;
+      color: #f0f6fc;
+      font-size: 20px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    
+    .control-btn:hover {
+      background: rgba(88, 166, 255, 0.2);
+      transform: scale(1.1);
+    }
+    
+    /* Show slide content properly in fullscreen mode */
+    .fullscreen-active .slide.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5vh 8vw;
+    }
+    
+    /* Hide regular navigation in fullscreen mode */
+    .fullscreen-active .navigation {
+      display: none;
+    }
+    
+    /* Hide slide number in fullscreen and show in controls */
+    .fullscreen-active .slide-number {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 90px;
+      font-size: 1rem;
+      color: #f0f6fc;
+      background: rgba(13, 17, 23, 0.5);
+      padding: 5px 15px;
+      border-radius: 20px;
+    }
+
+    /* Improved animations for Q&A slide image */
+    @keyframes floatEffect {
+      0% { transform: translateY(-15px) rotate(-5deg) scale(1); }
+      25% { transform: translateY(0px) rotate(2deg) scale(1.03); }
+      50% { transform: translateY(15px) rotate(5deg) scale(1); }
+      75% { transform: translateY(0px) rotate(-2deg) scale(1.03); }
+      100% { transform: translateY(-15px) rotate(-5deg) scale(1); }
+    }
+
+    @keyframes pulseGlow {
+      0% { filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4)); }
+      25% { filter: drop-shadow(0 0 15px rgba(88, 166, 255, 0.7)) drop-shadow(0 0 30px rgba(210, 168, 255, 0.4)); }
+      50% { filter: drop-shadow(0 0 25px rgba(88, 166, 255, 0.9)) drop-shadow(0 0 40px rgba(210, 168, 255, 0.6)); }
+      75% { filter: drop-shadow(0 0 15px rgba(88, 166, 255, 0.7)) drop-shadow(0 0 30px rgba(210, 168, 255, 0.4)); }
+      100% { filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4)); }
+    }
+    
+    /* Fixed 3D rotating effect for the Q&A image - complete 360 rotation */
+    @keyframes rotate3D {
+      0% { transform: perspective(1000px) rotateY(0deg) scale(1.05); }
+      100% { transform: perspective(1000px) rotateY(360deg) scale(1.05); }
+    }
+    
+    .qa-image {
+      animation: floatEffect 6s ease-in-out infinite, pulseGlow 4s infinite;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .qa-image:hover {
+      animation: none; /* Stop the floating animation when hovering */
+      filter: drop-shadow(0 0 25px rgba(88, 166, 255, 0.9)) drop-shadow(0 0 40px rgba(210, 168, 255, 0.6));
+    }
+
+    /* This ensures the Q&A image rotation happens on click rather than hover */
+    .qa-image.rotating {
+      animation: rotate3D 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    
+    /* Add particles specifically for the Q&A slide */
+    .slide:nth-child(11).active::before {
+      content: "?";
+      position: absolute;
+      font-size: 30px;
+      color: rgba(210, 168, 255, 0.6);
+      animation: questionMark 10s linear infinite;
+      z-index: 1;
+    }
+    
+    .slide:nth-child(11).active::after {
+      content: "?";
+      position: absolute;
+      font-size: 20px;
+      color: rgba(88, 166, 255, 0.6);
+      animation: questionMark2 12s linear infinite;
+      animation-delay: 3s;
+      z-index: 1;
+    }
+    
+    @keyframes questionMark {
+      0% { 
+        top: 100%; 
+        left: 20%; 
+        opacity: 0;
+        transform: rotate(0deg);
+      }
+      20% { 
+        opacity: 0.9;
+      }
+      100% { 
+        top: -10%; 
+        left: 50%; 
+        opacity: 0;
+        transform: rotate(360deg);
+      }
+    }
+    
+    @keyframes questionMark2 {
+      0% { 
+        top: 100%; 
+        left: 80%; 
+        opacity: 0;
+        transform: rotate(0deg) scale(1);
+      }
+      20% { 
+        opacity: 0.7;
+      }
+      50% {
+        transform: rotate(180deg) scale(1.5);
+      }
+      100% { 
+        top: -10%; 
+        left: 30%; 
+        opacity: 0;
+        transform: rotate(360deg) scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow">
+    <!-- Slide 1: Title -->
+    <div class="slide active title-slide">
+      <div class="slide-content">
+        <h1>Vibe Coding</h1>
+        <h3>Unlocking GitHub Copilot's Full Strength for Test Automation</h3>
+        <div class="logo-container">
+          <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/0*oRRpMJ9XqkRnYLhW.png" alt="GitHub Copilot Logo" style="width: 200px;">
+        </div>
+        <p>Transform Your Test Automation Experience with AI Collaboration</p>
+      </div>
+      <div class="footer">
+        April 18th, 2025
+      </div>
+    </div>
+    
+    <!-- Slide 2: What is Vibe Coding? REVERTED TO ORIGINAL -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>What is Vibe Coding?</h2>
+        <div class="two-column">
+          <div class="column">
+            <p>Vibe Coding is a groundbreaking shift in software development, where:</p>
+            <ul>
+              <li><strong>AI works alongside you</strong> throughout the entire development process</li>
+              <li>You focus on <strong>high-level intent</strong> rather than implementation details</li>
+              <li>Coding becomes a <strong>conversation</strong> about what you want to build</li>
+              <li>The AI adapts to your style and <strong>understands context</strong></li>
+            </ul>
+            <div class="inspiration">
+              "Vibe coding is less about rigid specificity and more about having a collaborative conversation with AI." — GitHub
+            </div>
+          </div>
+          <div class="column">
+            <div class="image-container">
+              <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffac20425-d626-463f-bf79-0f3c17f50080_253x288.png" alt="Vibe Coding Illustration" style="width: 220px;">
+              <p class="image-caption">Collaborative AI-human programming experience</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 3: GitHub Copilot and Main Features - CORRECTLY RESTRUCTURED -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>GitHub Copilot: Your AI Pair Programmer</h2>
+        
+        <!-- Two-column section with features and image -->
+        <div class="two-column">
+          <div class="column">
+            <h3>Key Features</h3>
+            <ul>
+              <li><strong>Smart code suggestions</strong> that understand your context</li>
+              <li><strong>Multi-language support</strong> across all major programming languages</li>
+              <li><strong>Inline chat</strong> to explain, refine, and transform your code</li>
+              <li><strong>Test generation</strong> for complete test coverage</li>
+              <li><strong>Documentation assistance</strong> for faster knowledge transfer</li>
+              <li><strong>Agent Mode</strong> for solving complex development tasks</li>
+            </ul>
+          </div>
+          <div class="column">
+            <div class="image-container">
+              <img src="https://i0.wp.com/oksala.net/wp-content/uploads/2022/06/image-6.png" alt="GitHub Copilot Logo" style="width: 100%;">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Video placed second -->
+        <div class="bottom-video-container">
+          <video controls preload="metadata" poster="https://github.githubassets.com/assets/features-breakout-agent-mode-2d0391e71590.webp">
+            <source src="https://github.githubassets.com/assets/features-breakout-agent-mode-4425fdb3e918.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <p class="video-caption">GitHub Copilot Agent Mode in action</p>
+        </div>
+        
+        <!-- Tip statement placed last -->
+        <div class="tip" style="margin-top: 20px; animation-delay: 2.0s !important;">
+          <strong>GitHub Copilot is trained on billions of lines of public code</strong>, allowing it to suggest whole lines or blocks of code with unprecedented accuracy.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 4: Copilot Modes Comparison - REORGANIZED TABLE -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>GitHub Copilot Modes</h2>
+        
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Chat Mode</th>
+              <th>Edit Mode</th>
+              <th>Agent Mode</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Primary Use</strong></td>
+              <td>Testing concepts, framework guidance</td>
+              <td>Fixing flaky tests, refactoring</td>
+              <td>E2E test creation, test suites</td>
+            </tr>
+            <tr>
+              <td><strong>Initiative</strong></td>
+              <td>You ask, Copilot responds</td>
+              <td>You direct, Copilot changes</td>
+              <td>Copilot can explore your app</td>
+            </tr>
+            <tr>
+              <td><strong>Context</strong></td>
+              <td>Limited to chat history</td>
+              <td>Focus on specific test files</td>
+              <td>Full test project understanding</td>
+            </tr>
+            <tr>
+              <td><strong>Tools Access</strong></td>
+              <td>Basic test code generation</td>
+              <td>Direct test file modification</td>
+              <td>Browser control, DOM inspection</td>
+            </tr>
+            <tr>
+              <td><strong>Best For</strong></td>
+              <td>Learning test patterns, debugging</td>
+              <td>Quick test fixes, maintenance</td>
+              <td>Test suite generation, exploration</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="inspiration">
+          "Each mode enhances different testing workflows — choose the right approach for each testing challenge"
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Agent Mode Spotlight - RESTRUCTURED -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>Agent Mode: Because two brains are better than one</h2>
+        <div class="two-column">
+          <div class="column">
+            <h3>What makes it revolutionary?</h3>
+            <ul>
+              <li>Acts as a <strong>full test automation partner</strong></li>
+              <li>Can <strong>browse test files, run test commands</strong>, analyze reports</li>
+              <li>Understands <strong>test frameworks and patterns</strong></li>
+              <li>Handles <strong>multi-step test scenarios</strong> with minimal guidance</li>
+              <li>Suggests improvements for test coverage and reliability</li>
+            </ul>
+          </div>
+          <div class="column">
+            <div class="image-container">
+              <img src="https://images.ctfassets.net/8aevphvgewt8/3VTDmb3JZxFyjSU3MvycLg/c4c1cc35712bbf285b7a8bfb52e21e90/GitHub_Copilot_Agent_Mode.png" alt="Copilot Agent Mode" style="width: 100%;">
+              <p class="image-caption">GitHub Copilot Agent Mode interface</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Video at bottom -->
+        <div class="bottom-video-container">
+          <video controls preload="metadata" poster="https://github.githubassets.com/assets/hero-poster-lg-68746a9c025e.webp">
+            <source src="https://github.githubassets.com/assets/hero-animation-lg-315ab307b8a1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <p class="video-caption">Agent Mode Demo: Using multiple tools to solve complex problems</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Prompt Engineering Example - FIXED BULLET POINTS -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>The Power of Effective Prompting for Testing</h2>
+        
+        <div class="two-column">
+          <div class="column">
+            <h3>A Test Automation Example:</h3>
+            <div class="code-block" style="background-color: #1e2736;">
+              <span style="color: #8b949e;">// ❌ Ineffective Prompt:</span><br>
+              "Test the login page"
+            </div>
+            <div class="code-block" style="background-color: #1e2736; margin-top: 1rem;">
+              <span style="color: #7ee787;">// ✅ Effective Prompt:</span><br>
+              "Create Nightwatch test cases for login using Page Object Model. Include tests for successful login, invalid credentials, locked account, and remember me functionality. We're using CSS selectors and the assertions should verify both UI state and API responses."
+            </div>
+          </div>
+          <div class="column">
+            <div class="tip">
+              <strong>Test-Focused Prompt Formula:</strong>
+              <ul style="list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem;">
+                <li style="padding-left: 0;">Specify the <strong>test framework/tools</strong></li>
+                <li style="padding-left: 0;">Define <strong>test scenarios</strong> to cover</li>
+                <li style="padding-left: 0;">Mention <strong>architecture patterns</strong> (POM, etc.)</li>
+                <li style="padding-left: 0;">Include <strong>specific assertions</strong> needed</li>
+                <li style="padding-left: 0;">Specify any <strong>test data requirements</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="inspiration">
+          "The difference between a basic test and a comprehensive test suite often comes down to how effectively you communicate testing requirements to Copilot."
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 7: Copilot Instructions & Workspace Context - ENHANCED WITH FRAMEWORK DETAILS -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>Supercharging Copilot with Custom Instructions</h2>
+        
+        <div class="two-column">
+          <div class="column">
+            <h3>Setting Up Custom Instructions</h3>
+            <p>Create a <code>.github/copilot/</code> directory with these files:</p>
+            <div class="code-block">
+              <span class="code-comment">// instructions.md</span><br>
+              <span class="code-comment"># Nightwatch Test Automation Standards</span><br>
+              <span class="code-comment">- Use Page Object Model with pages/ directory</span><br>
+              <span class="code-comment">- Locators in separate files in locators/ directory</span><br>
+              <span class="code-comment">- Test data from test-data/ directory, never hardcoded</span><br>
+              <span class="code-comment">- Use explicit waits with waitForElementVisible</span><br>
+              <span class="code-comment">- Follow Cucumber BDD pattern with Given/When/Then</span><br>
+              <span class="code-comment">- Prefer CSS selectors over XPath</span><br>
+              <span class="code-comment">- Include screenshot on failure using saveScreenshot</span><br>
+            </div>
+            <div class="code-block" style="margin-top: 0.5rem;">
+              <span class="code-comment">// prompts/prompts.md</span><br>
+              <span class="code-comment">// Fix flaky selector with more robust strategy</span><br>
+              <span class="code-comment">"The login button selector '.btn-login' is unreliable. Suggest a more robust selector using data-attributes or unique properties."</span><br><br>
+              <span class="code-comment">// Define page object for new feature</span><br>
+              <span class="code-comment">"Create a page object for the checkout page that handles payment method selection, address validation, and order confirmation using our standard POM structure."</span><br>
+            </div>
+          </div>
+          <div class="column">
+            <br><br><br><br><br>
+            <div class="tip">
+              <strong>Repository-Wide Benefits:</strong>
+              <ul style="list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem;">
+                <li style="padding-left: 0;">Test framework consistency</li>
+                <li style="padding-left: 0;">Standardized assertion patterns</li>
+                <li style="padding-left: 0;">Project-specific test knowledge</li>
+                <li style="padding-left: 0;">Best practices compliance</li>
+              </ul>
+            </div>
+            <div class="warning" style="margin-top: 1rem;">
+              <strong>Remember:</strong> Both files work together - instructions.md provides persistent context while prompts.md offers ready-to-use templates for your team
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- NEW SLIDE: MCP Server Integration - UPDATED WITH CORRECT INFORMATION AND STYLING -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>Accelerating Test Automation with MCP Server</h2>
+        <div class="two-column">
+          <div class="column">
+            <h3>Model Context Protocol Integration</h3>
+            <ul class="mcp-list">
+              <li>Enables <strong>browser automation</strong> directly through Copilot Agent Mode</li>
+              <li>When you request help with locators or page navigation, Agent Mode:</li>
+              <li class="checkmark" style="margin-left: 2rem;">Identifies available browser tools</li>
+              <li class="checkmark" style="margin-left: 2rem;">Launches browser and navigates to specified URL</li>
+              <li class="checkmark" style="margin-left: 2rem;">Captures complete DOM in flattened structure</li>
+              <li class="checkmark" style="margin-left: 2rem;">Analyzes DOM to identify optimal locators</li>
+            </ul>
+            <div class="tip">
+              <strong>Team Benefits:</strong> MCP integration dramatically reduces the time spent on locator identification and browser inspection tasks
+            </div>
+          </div>
+          <div class="column">
+            <div class="flowchart">
+              <div class="flow-step">1. Request browser interaction in Agent Mode</div>
+              <div class="flow-step">2. MCP server launches browser & navigates to URL</div>
+              <div class="flow-step">3. MCP captures full DOM structure</div>
+              <div class="flow-step">4. LLM analyzes DOM and suggests optimal locators</div>
+              <div class="flow-step">5. You verify and incorporate the locators</div>
+            </div>
+          </div>
+          <div class="warning">
+            <strong>Important:</strong> Always verify AI-suggested locators as they may occasionally be imprecise. MCP provides excellent suggestions, but human verification is essential.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 9: Agent Mode Demo - REWRITTEN -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>Agent Mode Demo:</h2>
+        
+        <div class="two-column">
+          <div class="column">
+            <h3>Locator Identification Workflow:</h3>
+            <ol style="padding-left: 2rem;">
+              <li style="padding-left: 0;">Ask Agent Mode to help with locators for a specific page</li>
+              <li style="padding-left: 0;">Provide the URL or navigation steps to reach the page</li>
+              <li style="padding-left: 0;">Agent Mode uses available tools to navigate and capture DOM</li>
+              <li style="padding-left: 0;">AI analyzes DOM structure and suggests optimal selectors</li>
+              <li style="padding-left: 0;">You review and validate the suggested locators</li>
+            </ol>
+            <div class="tip">
+              <strong>Pro Tip:</strong> The more context you provide about the page structure and element purpose, the more accurate the suggested locators will be.
+            </div>
+          </div>
+          <div class="column">
+            <div class="image-container">
+              <img src="/Users/vinodreddy/Downloads/ChatGPT Image Apr 17, 2025, 12_30_45 PM.png" alt="Agent Mode identifying locators" style="width: 205px;">
+              <p class="image-caption">Agent Mode analyzing page structure and suggesting locators</p>
+            </div>
+            <div class="warning">
+              <strong>Balance is Key:</strong> While MCP excels at suggesting locators, human expertise is vital for creating maintainable test suites that align with business requirements
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 10: Impact on Test Automation - CONSOLIDATED -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>The Human-AI Partnership in Test Automation</h2>
+        <div class="two-column">
+          <div class="column">
+            <h3>Where AI Excels:</h3>
+            <ul>
+              <li>Generating boilerplate test code rapidly</li>
+              <li>Identifying potential selectors from DOM</li>
+              <li>Suggesting test cases based on code analysis</li>
+              <li>Handling repetitive test maintenance</li>
+              <li>Learning from your codebase patterns</li>
+            </ul>
+          </div>
+          <div class="column">
+            <h3>Where Human Expertise is Essential:</h3>
+            <ul>
+              <li>Defining comprehensive test strategies</li>
+              <li>Validating locator reliability</li>
+              <li>Understanding business requirements</li>
+              <li>Reviewing generated test logic</li>
+              <li>Ensuring edge cases are covered</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip">
+          <strong>Success Metric:</strong> Balanced collaboration where AI handles the mechanical aspects of testing, freeing you to focus on test strategy, edge cases, and quality advocacy.
+        </div>
+        <div class="inspiration">
+          "The goal isn't to have AI replace testers, but to elevate testers to focus on the most impactful aspects of quality assurance."
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 11: Q&A -->
+    <div class="slide">
+      <div class="slide-content center-content">
+        <div class="image-container">
+          <img src="https://cdn3d.iconscout.com/3d/premium/thumb/boy-with-question-mark-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--dizzy-students-studying-student-having-doubt-back-to-school-pack-illustrations-4779533.png" alt="GitHub Copilot" class="qa-image" style="width: 700px;">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Navigation -->
+    <div class="navigation">
+      <button class="nav-button hidden" id="prevBtn">Previous</button>
+      <button class="nav-button" id="nextBtn">Next</button>
+    </div>
+    
+    <div class="slide-number" id="slideNumber">Slide 1 / 11</div>
+  </div>
+
+  <!-- Fullscreen button -->
+  <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle fullscreen mode">
+    <div class="icon"></div>
+  </button>
+
+  <!-- Progress bar for fullscreen mode -->
+  <div class="slide-progress-container">
+    <div class="slide-progress-bar" id="slideProgressBar"></div>
+  </div>
+
+  <!-- Presentation controls for fullscreen mode -->
+  <div class="presentation-controls">
+    <button class="control-btn" id="prevControlBtn" title="Previous slide">◀</button>
+    <button class="control-btn" id="nextControlBtn" title="Next slide">▶</button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    const slideNumber = document.getElementById('slideNumber');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideshow = document.querySelector('.slideshow');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const slideProgressBar = document.getElementById('slideProgressBar');
+    const prevControlBtn = document.getElementById('prevControlBtn');
+    const nextControlBtn = document.getElementById('nextControlBtn');
+    
+    // Initialize buttons properly
+    updateNavigationButtons();
+    
+    // Initialize particles for all slides
+    createParticlesForAllSlides();
+    
+    prevBtn.addEventListener('click', () => {
+      if (currentSlide > 0) {
+        navigateToSlide(currentSlide - 1);
+      }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < totalSlides - 1) {
+        navigateToSlide(currentSlide + 1);
+      }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+      // Navigation with arrow keys and space
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (currentSlide < totalSlides - 1) {
+          navigateToSlide(currentSlide + 1);
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (currentSlide > 0) {
+          navigateToSlide(currentSlide - 1);
+        }
+      } else if (e.key === 'f' || e.key === 'F') {
+        // Toggle fullscreen with 'f' key
+        toggleFullscreen();
+      } else if (e.key === 'Escape' && document.body.classList.contains('fullscreen-active')) {
+        // Exit fullscreen with Escape key
+        exitFullscreen();
+      }
+    });
+
+    function navigateToSlide(n) {
+      // Mark the current slide to fade out
+      slides[currentSlide].classList.add('fade-out');
+      
+      // Pause any videos in the current slide
+      const currentVideos = slides[currentSlide].querySelectorAll('video');
+      currentVideos.forEach(video => {
+        if (!video.paused) {
+          video.pause();
+        }
+      });
+      
+      // Wait for fade-out animation to complete before showing next slide
+      setTimeout(() => {
+        slides[currentSlide].classList.remove('active');
+        slides[currentSlide].classList.remove('fade-out');
+        currentSlide = n;
+        slides[currentSlide].classList.add('active');
+        
+        // Update slide number, navigation buttons, and progress bar
+        slideNumber.textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
+        updateNavigationButtons();
+        updateSlideProgress();
+      }, 600); // Match this timing with the CSS transition duration
+    }
+    
+    function updateNavigationButtons() {
+      // Hide previous button on first slide
+      prevBtn.classList.toggle('hidden', currentSlide === 0);
+      
+      // Hide next button on last slide
+      nextBtn.classList.toggle('hidden', currentSlide === totalSlides - 1);
+    }
+    
+    // Create floating particles for all slides
+    function createParticlesForAllSlides() {
+      // Create 70 particles in the slideshow container (increased from 40)
+      for (let i = 0; i < 70; i++) {
+        createParticle(slideshow, i);
+      }
+    }
+    
+    function createParticle(container, index) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      
+      // Random starting position
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      
+      // Random size between 3px and 10px (increased for better visibility)
+      const size = 3 + Math.random() * 7;
+      
+      // Random opacity between 0.2 and 0.5 (increased for better visibility)
+      const opacity = 0.2 + Math.random() * 0.3;
+      
+      // Random animation duration between 15s and 30s
+      const duration = 15 + Math.random() * 15;
+      
+      // Set properties
+      particle.style.left = `${x}%`;
+      particle.style.top = `${y}%`;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.opacity = opacity;
+      particle.style.background = `rgba(88, 166, 255, ${opacity})`;
+      
+      // Create fluid continuous motion without pauses
+      const randomKeyframe = `
+        @keyframes floatParticle${index} {
+          0% {
+            transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px) rotate(${Math.random() * 360}deg);
+          }
+          20% {
+            transform: translate(${Math.random() * 40 - 20}px, ${Math.random() * 40 - 20}px) rotate(${Math.random() * 360}deg);
+          }
+          40% {
+            transform: translate(${Math.random() * 60 - 30}px, ${Math.random() * 60 - 30}px) rotate(${Math.random() * 360}deg);
+          }
+          60% {
+            transform: translate(${Math.random() * 40 - 20}px, ${Math.random() * 40 - 20}px) rotate(${Math.random() * 360}deg);
+          }
+          80% {
+            transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px) rotate(${Math.random() * 360}deg);
+          }
+          100% {
+            transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px) rotate(${Math.random() * 360}deg);
+          }
+        }
+      `;
+      
+      // Add unique animation keyframe for this particle
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = randomKeyframe;
+      document.head.appendChild(styleSheet);
+      
+      // Add unique animation to particle
+      particle.style.animation = `floatParticle${index} ${duration}s ease-in-out infinite`;
+      
+      // Add to container
+      container.appendChild(particle);
+      
+      // Recreate particle when animation completes for continuous effect
+      setTimeout(() => {
+        container.removeChild(particle);
+        createParticle(container, index);
+      }, duration * 1000);
+    }
+
+    // Spotlight effect
+    const spotlightContainer = document.createElement('div');
+    spotlightContainer.classList.add('spotlight-container');
+    document.body.appendChild(spotlightContainer);
+
+    const spotlight = document.createElement('div');
+    spotlight.classList.add('spotlight');
+    spotlightContainer.appendChild(spotlight);
+
+    document.addEventListener('mousemove', (e) => {
+      spotlight.style.left = `${e.clientX}px`;
+      spotlight.style.top = `${e.clientY}px`;
+      spotlight.style.opacity = 1;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      spotlight.style.opacity = 0;
+    });
+
+    // SVG background pattern
+    const svgBackground = document.createElement('div');
+    svgBackground.classList.add('svg-background');
+    svgBackground.innerHTML = `
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(88, 166, 255, 0.2)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+      </svg>
+    `;
+    document.body.appendChild(svgBackground);
+
+    // Fullscreen functionality
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    
+    function toggleFullscreen() {
+      slideshow.classList.toggle('fullscreen');
+      document.body.classList.toggle('fullscreen-active');
+      updateSlideProgress();
+      
+      // Request actual browser fullscreen if available
+      if (document.body.classList.contains('fullscreen-active')) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        }
+      } else {
+        exitFullscreen();
+      }
+    }
+    
+    function exitFullscreen() {
+      slideshow.classList.remove('fullscreen');
+      document.body.classList.remove('fullscreen-active');
+      
+      // Exit actual browser fullscreen if active
+      if (document.exitFullscreen) {
+        if (document.fullscreenElement) document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        if (document.msFullscreenElement) document.msExitFullscreen();
+      }
+    }
+    
+    // Listen for browser fullscreen changes
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    function handleFullscreenChange() {
+      // If browser fullscreen was exited (e.g., by Escape key)
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+          !document.mozFullScreenElement && !document.msFullscreenElement) {
+        // Also exit our custom fullscreen mode
+        slideshow.classList.remove('fullscreen');
+        document.body.classList.remove('fullscreen-active');
+      }
+    }
+
+    prevControlBtn.addEventListener('click', () => {
+      if (currentSlide > 0) {
+        navigateToSlide(currentSlide - 1);
+      }
+    });
+
+    nextControlBtn.addEventListener('click', () => {
+      if (currentSlide < totalSlides - 1) {
+        navigateToSlide(currentSlide + 1);
+      }
+    });
+
+    function updateSlideProgress() {
+      const progress = ((currentSlide + 1) / totalSlides) * 100;
+      slideProgressBar.style.width = `${progress}%`;
+    }
+
+    // Q&A slide image click rotation functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const qaImage = document.querySelector('.qa-image');
+      if (qaImage) {
+        qaImage.addEventListener('click', function() {
+          // Reset any existing animations
+          this.classList.remove('rotating');
+          
+          // Force a browser reflow to restart animation
+          void this.offsetWidth;
+          
+          // Add the rotating class to trigger animation
+          this.classList.add('rotating');
+          
+          // After the animation completes, remove the class
+          setTimeout(() => {
+            this.classList.remove('rotating');
+          }, 3000);
+        });
+      }
+    });
+  </script>
+
+  <!-- Add Tilt.js for 3D interactive effects right before the closing body tag -->
+  <script type="text/javascript">
+    // Vanilla JS tilt effect implementation
+    class Tilt {
+      constructor(element, settings = {}) {
+        this.element = element;
+        this.settings = {
+          max: 15,
+          perspective: 1000,
+          scale: 1.05,
+          speed: 500,
+          ...settings
+        };
+        
+        this.isTilting = false;
+        this.transitionTimeout = null;
+        
+        this.init();
+      }
+      
+      init() {
+        this.element.style.transition = `transform ${this.settings.speed}ms cubic-bezier(0.03, 0.98, 0.52, 0.99)`;
+        this.element.style.transformStyle = "preserve-3d";
+        this.addEventListeners();
+      }
+      
+      addEventListeners() {
+        this.onMouseEnterBind = this.onMouseEnter.bind(this);
+        this.onMouseMoveBind = this.onMouseMove.bind(this);
+        this.onMouseLeaveBind = this.onMouseLeave.bind(this);
+        
+        this.element.addEventListener("mouseenter", this.onMouseEnterBind);
+        this.element.addEventListener("mousemove", this.onMouseMoveBind);
+        this.element.addEventListener("mouseleave", this.onMouseLeaveBind);
+      }
+      
+      onMouseEnter() {
+        this.isTilting = true;
+        this.element.style.willChange = "transform";
+      }
+      
+      onMouseMove(e) {
+        if (!this.isTilting) return;
+        
+        const rect = this.element.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xc = rect.width / 2;
+        const yc = rect.height / 2;
+        
+        const offsetX = (x - xc) / xc;
+        const offsetY = (y - yc) / yc;
+        
+        const tiltX = offsetY * this.settings.max;
+        const tiltY = -(offsetX * this.settings.max);
+        
+        this.element.style.transform = `perspective(${this.settings.perspective}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(${this.settings.scale}, ${this.settings.scale}, ${this.settings.scale})`;
+      }
+      
+      onMouseLeave() {
+        this.isTilting = false;
+        this.element.style.transform = `perspective(${this.settings.perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        
+        clearTimeout(this.transitionTimeout);
+        this.transitionTimeout = setTimeout(() => {
+          this.element.style.willChange = "auto";
+        }, this.settings.speed);
+      }
+      
+      destroy() {
+        this.element.removeEventListener("mouseenter", this.onMouseEnterBind);
+        this.element.removeEventListener("mousemove", this.onMouseMoveBind);
+        this.element.removeEventListener("mouseleave", this.onMouseLeaveBind);
+        
+        this.element.style.transform = "";
+        this.element.style.transition = "";
+      }
+    }
+    
+    // Apply tilt effect to important elements
+    document.addEventListener('DOMContentLoaded', () => {
+      // Apply to code blocks
+      document.querySelectorAll('.code-block').forEach(element => {
+        new Tilt(element, { max: 5, scale: 1.02, perspective: 1500 });
+      });
+      
+      // Apply to tip and warning boxes
+      document.querySelectorAll('.tip, .warning, .inspiration').forEach(element => {
+        new Tilt(element, { max: 7, scale: 1.03, perspective: 1200 });
+      });
+      
+      // Apply to images
+      document.querySelectorAll('.image-container').forEach(element => {
+        new Tilt(element, { max: 10, scale: 1.05, perspective: 800 });
+      });
+      
+      // Apply to flow steps
+      document.querySelectorAll('.flow-step').forEach(element => {
+        new Tilt(element, { max: 5, scale: 1.02, perspective: 1000 });
+      });
+    });
+  </script>
+</body>
+</html>
