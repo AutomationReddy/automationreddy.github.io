@@ -69,11 +69,11 @@
     }
     
     /* Fix for Q&A slide to ensure it doesn't appear on every page */
-    .slide:nth-child(11) {
+    .slide:nth-child(12) {
       display: none;
     }
     
-    .slide:nth-child(11).active {
+    .slide:nth-child(12).active {
       display: flex;
     }
     
@@ -648,19 +648,26 @@
     /* Consistent top-to-bottom animations for all slides */
     .slide h2 {
       animation: fadeInRight 0.8s ease-out forwards;
+      animation-delay: 0.2s;
       opacity: 0;
       transform-origin: left center;
     }
     
     .slide.active h3 {
       animation: fadeInUp 0.6s ease-out forwards;
-      animation-delay: 0.3s;
+      animation-delay: 0.5s;
       opacity: 0;
     }
     
     .slide.active p, .slide.active .tip, .slide.active .warning {
       animation: fadeInUp 0.8s ease-out forwards;
-      animation-delay: 0.5s;
+      animation-delay: 0.8s;
+      opacity: 0;
+    }
+
+    .slide.active .tip.agenda {
+      animation: fadeInUp 0.8s ease-out forwards;
+      animation-delay: 2.2s;
       opacity: 0;
     }
     
@@ -670,122 +677,110 @@
       opacity: 0;
     }
     
-    .slide.active li:nth-child(1) { animation-delay: 0.5s; }
-    .slide.active li:nth-child(2) { animation-delay: 0.7s; }
-    .slide.active li:nth-child(3) { animation-delay: 0.9s; }
-    .slide.active li:nth-child(4) { animation-delay: 1.1s; }
-    .slide.active li:nth-child(5) { animation-delay: 1.3s; }
-    .slide.active li:nth-child(6) { animation-delay: 1.5s; }
+    .slide.active li:nth-child(1) { animation-delay: 1.0s; }
+    .slide.active li:nth-child(2) { animation-delay: 1.2s; }
+    .slide.active li:nth-child(3) { animation-delay: 1.4s; }
+    .slide.active li:nth-child(4) { animation-delay: 1.6s; }
+    .slide.active li:nth-child(5) { animation-delay: 1.8s; }
+    .slide.active li:nth-child(6) { animation-delay: 2.0s; }
+    /* .slide.active li:nth-child(7) { animation-delay: 2.2s; } */
     
-    /* Sequential code block animations for slide 6 */
-    .slide:nth-child(6).active .code-block:nth-of-type(1) {
+    /* Sequential code block animations for all slides */
+    .slide.active .code-block:nth-of-type(1) {
       animation: fadeInCode 0.8s ease-out forwards;
-      animation-delay: 0.6s;
+      animation-delay: 1.0s;
       opacity: 0;
     }
     
-    .slide:nth-child(6).active .code-block:nth-of-type(2) {
+    .slide.active .code-block:nth-of-type(2) {
       animation: fadeInCode 0.8s ease-out forwards;
-      animation-delay: 1.2s;
-      opacity: 0;
-    }
-    
-    /* Slide 7 code block sequential animations */
-    .slide:nth-child(7).active .code-block:nth-of-type(1) {
-      animation: fadeInCode 0.8s ease-out forwards;
-      animation-delay: 0.6s;
-      opacity: 0;
-    }
-    
-    .slide:nth-child(7).active .code-block:nth-of-type(2) {
-      animation: fadeInCode 0.8s ease-out forwards;
-      animation-delay: 1.2s;
+      animation-delay: 1.5s;
       opacity: 0;
     }
     
     .slide.active .image-container, .slide.active .video-container, .slide.active .bottom-video-container {
       animation: zoomIn 1s ease-out forwards;
-      animation-delay: 1.7s;
+      animation-delay: 2.0s;
       opacity: 0;
     }
     
     /* Animation for inspiration blocks */
     .slide.active .inspiration {
       animation: fadeInGlow 1.2s ease-out forwards;
-      animation-delay: 1.8s;
+      animation-delay: 2.2s;
       opacity: 0;
     }
     
     /* Animation for comparison table in slide 4 - top to bottom */
-    .slide:nth-child(4).active .comparison-table th {
+    .slide:nth-child(5).active .comparison-table th {
       animation: fadeInTable 0.6s ease-out forwards;
       animation-delay: 0.6s;
       opacity: 0;
     }
     
-    .slide:nth-child(4).active .comparison-table tr:nth-child(1) td {
+    .slide:nth-child(5).active .comparison-table tr:nth-child(1) td {
       animation: fadeInTable 0.6s ease-out forwards;
       animation-delay: 0.8s;
       opacity: 0;
     }
     
-    .slide:nth-child(4).active .comparison-table tr:nth-child(2) td {
+    .slide:nth-child(5).active .comparison-table tr:nth-child(2) td {
       animation: fadeInTable 0.6s ease-out forwards;
       animation-delay: 1.0s;
       opacity: 0;
     }
     
-    .slide:nth-child(4).active .comparison-table tr:nth-child(3) td {
+    .slide:nth-child(5).active .comparison-table tr:nth-child(3) td {
       animation: fadeInTable 0.6s ease-out forwards;
       animation-delay: 1.2s;
       opacity: 0;
     }
     
-    .slide:nth-child(4).active .comparison-table tr:nth-child(4) td {
+    .slide:nth-child(5).active .comparison-table tr:nth-child(4) td {
       animation: fadeInTable 0.6s ease-out forwards;
       animation-delay: 1.4s;
       opacity: 0;
     }
     
-    .slide:nth-child(4).active .comparison-table tr:nth-child(5) td {
+    .slide:nth-child(5).active .comparison-table tr:nth-child(5) td {
       animation: fadeInTable 0.6s ease-out forwards;
       animation-delay: 1.6s;
       opacity: 0;
     }
 
     /* Animation for flowchart steps with staggered timing */
-    .slide:nth-child(8).active .flow-step:nth-child(1) {
+    .slide:nth-child(9).active .flow-step:nth-child(1) {
       animation: fadeInStep 0.6s ease-out forwards;
       animation-delay: 0.3s;
       opacity: 0;
     }
     
-    .slide:nth-child(8).active .flow-step:nth-child(2) {
+    .slide:nth-child(9).active .flow-step:nth-child(2) {
       animation: fadeInStep 0.6s ease-out forwards;
       animation-delay: 0.6s;
       opacity: 0;
     }
     
-    .slide:nth-child(8).active .flow-step:nth-child(3) {
+    .slide:nth-child(9).active .flow-step:nth-child(3) {
       animation: fadeInStep 0.6s ease-out forwards;
       animation-delay: 0.9s;
       opacity: 0;
     }
     
-    .slide:nth-child(8).active .flow-step:nth-child(4) {
+    .slide:nth-child(9).active .flow-step:nth-child(4) {
       animation: fadeInStep 0.6s ease-out forwards;
       animation-delay: 1.2s;
       opacity: 0;
     }
     
-    .slide:nth-child(8).active .flow-step:nth-child(5) {
+    .slide:nth-child(9).active .flow-step:nth-child(5) {
       animation: fadeInStep 0.6s ease-out forwards;
       animation-delay: 1.5s;
       opacity: 0;
     }
     
     /* Animation for the arrows between flowchart steps */
-    .slide:nth-child(8).active .flow-step:not(:last-child):after {
+    .slide:nth-child(9).active .flow-step:not(:last-child):after {
       animation: fadeInArrow 0.5s ease-out forwards;
       animation-delay: 1.7s;
       opacity: 0;
@@ -1204,7 +1199,7 @@
     }
     
     /* Add particles specifically for the Q&A slide */
-    .slide:nth-child(11).active::before {
+    .slide:nth-child(13).active::before {
       content: "?";
       position: absolute;
       font-size: 30px;
@@ -1213,7 +1208,7 @@
       z-index: 1;
     }
     
-    .slide:nth-child(11).active::after {
+    .slide:nth-child(13).active::after {
       content: "?";
       position: absolute;
       font-size: 20px;
@@ -1261,6 +1256,194 @@
         transform: rotate(360deg) scale(1);
       }
     }
+
+    /* Vibe Testing Slide Styles - Updated Colors */
+    .vibe-testing-slide .slide-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .vibe-testing-header {
+      font-size: 3.5rem;
+      background: linear-gradient(90deg, #58a6ff, #d2a8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(88, 166, 255, 0.4);
+      margin-bottom: 1.5rem;
+      position: relative;
+      transform-style: preserve-3d;
+      letter-spacing: 2px;
+      animation: fadeInUp 1s ease-out forwards, pulseGlow 4s 1s infinite;
+      opacity: 0;
+    }
+    
+    .vibe-testing-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #58a6ff, #d2a8ff);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: revealUnderline 1.5s forwards 0.5s;
+    }
+    
+    @keyframes revealUnderline {
+      to { transform: scaleX(1); }
+    }
+    
+    .vibe-feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+    
+    .vibe-feature {
+      background: rgba(22, 27, 34, 0.7);
+      border-radius: 10px;
+      border-left: 4px solid #58a6ff;
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      transform: translateY(30px);
+      opacity: 0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .vibe-feature:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 15px 35px rgba(88, 166, 255, 0.2) !important;
+    }
+    
+    .vibe-feature-icon {
+      margin-right: 1rem;
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(210, 168, 255, 0.2));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      color: #58a6ff;
+    }
+    
+    .vibe-feature-content {
+      flex: 1;
+    }
+    
+    .vibe-feature-title {
+      color: #f0f6fc;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .vibe-feature-description {
+      color: #e6e6e6;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    
+    .vibe-intro {
+      text-align: center;
+      max-width: 800px;
+      font-size: 1.8rem;
+      color: #f0f6fc;
+      margin: 1.5rem 0;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeInUp 0.8s forwards 0.3s;
+      text-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
+    }
+    
+    .slide.active .vibe-feature:nth-child(1) { animation: fadeInUp 0.6s forwards 0.6s; }
+    .slide.active .vibe-feature:nth-child(2) { animation: fadeInUp 0.6s forwards 0.8s; }
+    .slide.active .vibe-feature:nth-child(3) { animation: fadeInUp 0.6s forwards 1.0s; }
+    .slide.active .vibe-feature:nth-child(4) { animation: fadeInUp 0.6s forwards 1.2s; }
+    .slide.active .vibe-feature:nth-child(5) { animation: fadeInUp 0.6s forwards 1.4s; }
+    
+    .future-testing-banner {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 1.2rem;
+      background: linear-gradient(90deg, rgba(88, 166, 255, 0.15), rgba(210, 168, 255, 0.15));
+      border-radius: 10px;
+      text-align: center;
+      transform: translateY(30px);
+      opacity: 0;
+      animation: zoomIn 0.8s forwards 1.8s;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .future-testing-text {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #f0f6fc;
+      text-shadow: 0 0 15px rgba(88, 166, 255, 0.6);
+      letter-spacing: 1px;
+    }
+    
+    .vibe-glow-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .vibe-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(88, 166, 255, 0.3) 0%, rgba(210, 168, 255, 0.1) 40%, rgba(0, 0, 0, 0) 70%);
+      filter: blur(40px);
+      animation: moveGlow 15s infinite alternate;
+      opacity: 0.7;
+    }
+    
+    @keyframes moveGlow {
+      0% { transform: translate(20%, 20%); }
+      33% { transform: translate(70%, 30%); }
+      66% { transform: translate(30%, 70%); }
+      100% { transform: translate(60%, 60%); }
+    }
+    
+    /* Fixed the animation to match the theme */
+    @keyframes pulseVibe {
+      0% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.2); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    /* Slide 5: GitHub Copilot Modes - Centered content */
+    .slide:nth-child(5) .slide-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      height: 100%; /* Ensure the content container takes full height */
+    }
+    
+    .slide:nth-child(5) .comparison-table {
+      margin: 2rem auto; /* Add more space around the table */
+      max-width: 90%; /* Limit table width */
+    }
+    
+    .slide:nth-child(5) .inspiration {
+      margin-top: 2rem; /* Add space above the inspiration quote */
+      max-width: 90%; /* Match table width */
+    }
   </style>
 </head>
 <body>
@@ -1277,6 +1460,36 @@
       </div>
       <div class="footer">
         April 18th, 2025
+      </div>
+    </div>
+    
+    <!-- New Slide 2: Agenda -->
+    <div class="slide">
+      <div class="slide-content">
+        <h2>Today's Agenda</h2>
+        <div class="two-column">
+          <div class="column">
+            <ul>
+              <li>What is Vibe Coding?</li>
+              <li>GitHub Copilot: Your AI Pair Programmer</li>
+              <li>GitHub Copilot Modes</li>
+              <li>Agent Mode Spotlight</li>
+              <li>The Power of Effective Prompting for Testing</li>
+            </ul>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Supercharging Copilot with Custom Instructions</li>
+              <li>Accelerating Test Automation with MCP Server</li>
+              <li>Agent Mode Demo</li>
+              <li>The Human-AI Partnership in Test Automation</li>
+              <li>Q&A</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip agenda">
+          <strong>Today's Goal:</strong> Learn how to leverage GitHub Copilot's capabilities to transform your test automation workflows and increase productivity.
+        </div>
       </div>
     </div>
     
@@ -1576,7 +1789,7 @@
           </div>
           <div class="column">
             <div class="image-container">
-              <img src="/demo.png" alt="Agent Mode identifying locators" style="width: 205px;">
+              <img src="demo.png" alt="Agent Mode identifying locators" style="width: 205px;">
               <p class="image-caption">Agent Mode analyzing page structure and suggesting locators</p>
             </div>
             <div class="warning">
@@ -1622,7 +1835,76 @@
       </div>
     </div>
     
-    <!-- Slide 11: Q&A -->
+    <!-- NEW Slide 11: Vibe Testing - Updated Design -->
+    <div class="slide vibe-testing-slide">
+      <div class="slide-content">
+        <div class="vibe-glow-container">
+          <div class="vibe-glow" style="top: 10%; left: 20%;"></div>
+          <div class="vibe-glow" style="top: 60%; left: 70%;"></div>
+        </div>
+        
+        <h2 class="vibe-testing-header">VIBE TESTING</h2>
+        
+        <div class="vibe-intro">
+          The Revolutionary Way to Ensure Quality
+        </div>
+        
+        <div class="vibe-feature-grid">
+          <div class="vibe-feature">
+            <div class="vibe-feature-icon">
+              <i>🔄</i>
+            </div>
+            <div class="vibe-feature-content">
+              <div class="vibe-feature-description">Transform your approach to quality assurance by combining the power of AI with human creativity</div>
+            </div>
+          </div>
+          
+          <div class="vibe-feature">
+            <div class="vibe-feature-icon">
+              <i>🤖</i>
+            </div>
+            <div class="vibe-feature-content">
+              <div class="vibe-feature-description">Let AI handle the repetitive while you focus on the innovative</div>
+            </div>
+          </div>
+          
+          <div class="vibe-feature">
+            <div class="vibe-feature-icon">
+              <i>🧠</i>
+            </div>
+            <div class="vibe-feature-content">
+              <div class="vibe-feature-description">Craft high-level test intentions instead of detailed implementations</div>
+            </div>
+          </div>
+          
+          <div class="vibe-feature">
+            <div class="vibe-feature-icon">
+              <i>📊</i>
+            </div>
+            <div class="vibe-feature-content">
+              <div class="vibe-feature-description">Achieve broader coverage in less time with AI-powered test generation</div>
+            </div>
+          </div>
+          
+          <div class="vibe-feature">
+            <div class="vibe-feature-icon">
+              <i>🔧</i>
+            </div>
+            <div class="vibe-feature-content">
+              <div class="vibe-feature-description">Use self healing capability for locator fixes</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="future-testing-banner">
+          <div class="future-testing-text">
+            The Future of Testing Is Here
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 12: Q&A (was previously Slide 11) -->
     <div class="slide">
       <div class="slide-content center-content">
         <div class="image-container">
@@ -1637,7 +1919,7 @@
       <button class="nav-button" id="nextBtn">Next</button>
     </div>
     
-    <div class="slide-number" id="slideNumber">Slide 1 / 11</div>
+    <div class="slide-number" id="slideNumber">Slide 1 / 12</div>
   </div>
 
   <!-- Fullscreen button -->
@@ -1939,11 +2221,8 @@
         });
       }
     });
-  </script>
 
-  <!-- Add Tilt.js for 3D interactive effects right before the closing body tag -->
-  <script type="text/javascript">
-    // Vanilla JS tilt effect implementation
+    // Add Tilt.js functionality - Fix for "Tilt is not defined" error
     class Tilt {
       constructor(element, settings = {}) {
         this.element = element;
@@ -2042,6 +2321,19 @@
       document.querySelectorAll('.flow-step').forEach(element => {
         new Tilt(element, { max: 5, scale: 1.02, perspective: 1000 });
       });
+      
+      // Apply to Vibe Testing features
+      document.querySelectorAll('.vibe-feature').forEach(element => {
+        new Tilt(element, { max: 8, scale: 1.03, perspective: 1000 });
+      });
+      
+      // Apply to Future Testing banner
+      document.querySelectorAll('.future-testing-banner').forEach(element => {
+        new Tilt(element, { max: 5, scale: 1.02, perspective: 1000 });
+      });
+      
+      // Update slide count and numbers
+      slideNumber.textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
     });
   </script>
 </body>
